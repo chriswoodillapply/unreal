@@ -8,6 +8,19 @@ Then edit this file to change which workflow runs.
 """
 
 import unreal
+import importlib, sys
+
+# Hot-reload unreallib modules so edits are picked up in a persistent Unreal Python session
+def _reload_unreallib():
+    to_reload = [m for m in list(sys.modules.keys()) if m.startswith('unreallib') or m.startswith('remotecontrol')]
+    for m in sorted(to_reload, reverse=True):  # reverse to reload leaf modules first
+        try:
+            importlib.reload(sys.modules[m])
+        except Exception:
+            pass
+
+_reload_unreallib()
+
 from unreallib.workflow import WorkflowLoader, WorkflowExecutor
 
 # ============================================================
@@ -19,7 +32,7 @@ WORKFLOW_NAME = 'colored_grid'  # Change to: colored_grid, multiple_patterns, or
 # ============================================================
 
 print("=" * 70)
-print(f"RUNNING WORKFLOW: {WORKFLOW_NAME}")
+print(f"RUNNING WORKFLOW: {WORKFLOW_NAME} (hot reload active)")
 print("=" * 70)
 
 # Load workflow

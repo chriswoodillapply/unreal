@@ -3,7 +3,7 @@ Set Actor Color Task - Applies colors to specific actors
 """
 
 from typing import List, Tuple
-from unreallib.workflow.task import Task, TaskResult
+from unreallib.workflow.task import Task, TaskResult, TaskStatus
 
 
 class SetActorColorTask(Task):
@@ -35,18 +35,21 @@ class SetActorColorTask(Task):
         """Apply color to specified actors"""
         import unreal
         from unreallib import materials
-        
+
+        print(f"SetActorColorTask: Target labels={self.actor_labels}")
         editor_actor_subsystem = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
         all_actors = editor_actor_subsystem.get_all_level_actors()
-        
+
         modified_count = 0
         for actor in all_actors:
             label = actor.get_actor_label()
             if label in self.actor_labels:
+                print(f"  Coloring actor '{label}' -> {self.color}")
                 materials.set_actor_color(actor, self.color, self.opacity)
                 modified_count += 1
-        
+
         return TaskResult(
+            status=TaskStatus.SUCCESS,
             output={
                 'modified_count': modified_count,
                 'color': self.color,
