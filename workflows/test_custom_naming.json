@@ -1,0 +1,29 @@
+{
+  "name": "Test Grid with Custom Naming",
+  "description": "Creates a 5x5 grid with custom actor naming using upsert mode",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after": false,
+    "actor_id_prefix": "test_"
+  },
+  "tasks": [
+    {
+      "name": "clear_scene",
+      "type": "ClearLevelTask",
+      "enabled": false
+    },
+    {
+      "name": "spawn_grid",
+      "type": "SpawnGridTask",
+      "enabled": true,
+      "params": {
+        "rows": 5,
+        "cols": 5,
+        "spacing": 200,
+        "shape": "cube",
+        "scale": 1.0
+      }
+    }
+  ]
+}

@@ -18,6 +18,7 @@ This folder contains JSON workflow definitions that can be loaded and executed i
     {
       "name": "task1",
       "type": "SpawnGridTask",
+      "enabled": true,
       "params": {
         "rows": 5,
         "cols": 5,
@@ -27,6 +28,7 @@ This folder contains JSON workflow definitions that can be loaded and executed i
     {
       "name": "task2",
       "type": "ColorGridTask",
+      "enabled": false,
       "params": {
         "prefix": "my_prefix_"
       },
@@ -35,6 +37,15 @@ This folder contains JSON workflow definitions that can be loaded and executed i
   ]
 }
 ```
+
+### Task Properties
+
+Each task supports the following properties:
+- **name** (required): Unique identifier for the task
+- **type** (required): Task class name (see Available Task Types below)
+- **enabled** (optional): Set to `false` to skip this task (defaults to `true`)
+- **params** (optional): Task-specific parameters
+- **depends_on** (optional): Array of task names this task depends on
 
 ## Available Task Types
 

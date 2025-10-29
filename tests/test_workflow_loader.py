@@ -123,6 +123,44 @@ class TestWorkflowLoader:
         assert 'grid' in workflow.tasks
         assert 'circle' in workflow.tasks
         assert 'spiral' in workflow.tasks
+    
+    def test_disabled_task_skipped(self):
+        """Test that disabled tasks are not added to workflow"""
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+            workflow_def = {
+                "name": "Test Disabled",
+                "tasks": [
+                    {
+                        "name": "enabled_task",
+                        "type": "ClearLevelTask",
+                        "enabled": True
+                    },
+                    {
+                        "name": "disabled_task",
+                        "type": "SpawnGridTask",
+                        "enabled": False,
+                        "params": {"rows": 5, "cols": 5}
+                    },
+                    {
+                        "name": "default_enabled",
+                        "type": "ClearLevelTask"
+                    }
+                ]
+            }
+            json.dump(workflow_def, f)
+            temp_file = f.name
+        
+        try:
+            loader = WorkflowLoader(Path(temp_file).parent)
+            workflow = loader.load(Path(temp_file).name)
+            
+            # Only 2 tasks should be in workflow (disabled one skipped)
+            assert len(workflow.tasks) == 2
+            assert 'enabled_task' in workflow.tasks
+            assert 'default_enabled' in workflow.tasks
+            assert 'disabled_task' not in workflow.tasks
+        finally:
+            Path(temp_file).unlink()
 
 
 class TestWorkflowLoaderErrors:

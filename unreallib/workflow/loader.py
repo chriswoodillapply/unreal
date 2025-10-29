@@ -103,6 +103,11 @@ class WorkflowLoader:
         # Add tasks
         tasks_def = definition.get('tasks', [])
         for task_def in tasks_def:
+            # Check if task is enabled (default to True if not specified)
+            if not task_def.get('enabled', True):
+                print(f"⊘ Skipping disabled task: {task_def.get('name', 'unnamed')}")
+                continue
+            
             task = self._create_task(task_def)
             dependencies = task_def.get('depends_on', [])
             workflow.add_task(task, dependencies)
