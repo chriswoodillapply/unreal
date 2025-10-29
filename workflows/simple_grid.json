@@ -1,0 +1,28 @@
+{
+  "name": "Simple Grid",
+  "description": "Creates a basic 5x5 grid of cube actors",
+  "config": {
+    "upsert_mode": false,
+    "clear_before_execute": true,
+    "save_after": false,
+    "actor_id_prefix": "grid_"
+  },
+  "tasks": [
+    {
+      "name": "clear_scene",
+      "type": "ClearLevelTask"
+    },
+    {
+      "name": "spawn_grid",
+      "type": "SpawnGridTask",
+      "params": {
+        "rows": 5,
+        "cols": 5,
+        "spacing": 200,
+        "shape": "cube",
+        "scale": 1.0
+      },
+      "depends_on": ["clear_scene"]
+    }
+  ]
+}
