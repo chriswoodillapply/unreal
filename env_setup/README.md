@@ -48,6 +48,29 @@ This will:
 - Installs all requirements from `requirements.txt`
 - Activates the environment
 
+### `deploy.bat` / `deploy.py` ✨ NEW
+**Purpose**: Deploy latest libraries to existing Unreal projects  
+**Usage**: `deploy.bat "C:\Path\To\TargetProject"`  
+**What it does**:
+- Copies latest `unreallib/` to target project
+- Copies latest `workflows/` (JSON workflow definitions)
+- Copies latest `examples/` scripts
+- Copies latest `remotecontrol/` module
+- Removes old versions for clean update
+- Shows file count and success status
+
+**When to use**:
+- Updating existing projects with latest code
+- Syncing multiple projects with main development
+- After making changes to core libraries
+- After adding new workflows or tasks
+
+**Example**:
+```batch
+cd scripts\env_setup
+deploy.bat "C:\Users\cwood\Documents\Unreal Projects\Test1"
+```
+
 **Usage**:
 ```batch
 env_setup\setup_python_env.bat
