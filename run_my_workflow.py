@@ -14,7 +14,7 @@ from unreallib.workflow import WorkflowLoader, WorkflowExecutor
 # CONFIGURATION - Change these settings
 # ============================================================
 
-WORKFLOW_NAME = 'simple_grid'  # Change to: colored_grid, multiple_patterns, or your custom workflow
+WORKFLOW_NAME = 'colored_grid'  # Change to: colored_grid, multiple_patterns, or your custom workflow
 
 # ============================================================
 
