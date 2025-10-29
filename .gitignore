@@ -1,0 +1,37 @@
+# Virtual Environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment variables
+.env
+.env.*.backup
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+
+# Archive folder (legacy files)
+archive/
+
+# Command file (project-specific)
+.unreal_command.py
