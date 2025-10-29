@@ -20,6 +20,17 @@
       }
     },
     {
+      "name": "material_upsert",
+      "type": "MaterialUpsertTask",
+      "params": {
+        "material_path": "/Game/Workflow/MI_RuntimeColorBase",
+        "parent_material_path": "/Engine/BasicShapes/BasicShapeMaterial",
+        "vector_parameter_name": "Color",
+        "allow_create": true
+      },
+      "depends_on": ["spawn_grid"]
+    },
+    {
       "name": "color_grid",
       "type": "ColorGridTask",
       "params": {
@@ -36,7 +47,7 @@
           "2_2": {"color": [0.0, 0.5, 0.5], "opacity": 1.0}
         }
       },
-      "depends_on": ["spawn_grid"]
+      "depends_on": ["material_upsert"]
     }
   ]
 }

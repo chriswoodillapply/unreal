@@ -11,6 +11,7 @@ from .spawn_circle_task import SpawnCircleTask
 from .spawn_spiral_task import SpawnSpiralTask
 from .set_actor_color_task import SetActorColorTask
 from .color_grid_task import ColorGridTask
+from .material_upsert_task import MaterialUpsertTask
 
 __all__ = [
     'ClearLevelTask',
@@ -19,4 +20,5 @@ __all__ = [
     'SpawnSpiralTask',
     'SetActorColorTask',
     'ColorGridTask',
+    'MaterialUpsertTask',
 ]

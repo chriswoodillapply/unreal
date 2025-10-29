@@ -16,7 +16,8 @@ from unreallib.tasks import (
     SpawnCircleTask,
     SpawnSpiralTask,
     SetActorColorTask,
-    ColorGridTask
+    ColorGridTask,
+    MaterialUpsertTask,
 )
 
 
@@ -28,6 +29,7 @@ TASK_REGISTRY = {
     'SpawnSpiralTask': SpawnSpiralTask,
     'SetActorColorTask': SetActorColorTask,
     'ColorGridTask': ColorGridTask,
+    'MaterialUpsertTask': MaterialUpsertTask,
 }
 
 
