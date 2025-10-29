@@ -9,6 +9,7 @@ from .graph import WorkflowGraph
 from .task import Task, TaskResult, TaskStatus
 from .config import WorkflowConfig, get_preset_config
 from .executor import WorkflowExecutor
+from .loader import WorkflowLoader
 
 __all__ = [
     'WorkflowGraph',
@@ -18,4 +19,5 @@ __all__ = [
     'WorkflowExecutor',
     'WorkflowConfig',
     'get_preset_config',
+    'WorkflowLoader',
 ]

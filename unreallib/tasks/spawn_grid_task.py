@@ -1,8 +1,8 @@
 """
-Tasks for spawning actors in various patterns
+Spawn Grid Task - Creates actors in a grid pattern
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any
 from unreallib.workflow import Task, TaskResult, TaskStatus
 
 
@@ -136,106 +136,3 @@ class SpawnGridTask(Task):
                     'upsert_mode': False
                 }
             )
-
-
-class SpawnCircleTask(Task):
-    """
-    Spawns actors in a circle pattern
-    
-    Args:
-        name: Task name
-        count: Number of actors
-        radius: Circle radius
-        shape: Actor shape ('cube', 'sphere', 'cylinder')
-    
-    Usage:
-        task = SpawnCircleTask("circle", count=12, radius=500, shape='sphere')
-    """
-    
-    def __init__(
-        self,
-        name: str,
-        count: int = 12,
-        radius: float = 500.0,
-        shape: str = 'sphere'
-    ):
-        super().__init__(
-            name,
-            count=count,
-            radius=radius,
-            shape=shape
-        )
-    
-    def execute(self, context: Dict[str, Any]) -> TaskResult:
-        """Spawn circle of actors"""
-        from unreallib import actors
-        
-        actor_list = actors.spawn_circle(
-            count=self.params['count'],
-            radius=self.params['radius'],
-            shape=self.params['shape']
-        )
-        
-        return TaskResult(
-            status=TaskStatus.SUCCESS,
-            output={'actors': actor_list, 'count': len(actor_list)},
-            metadata={
-                'pattern': 'circle',
-                'radius': self.params['radius'],
-                'shape': self.params['shape']
-            }
-        )
-
-
-class SpawnSpiralTask(Task):
-    """
-    Spawns actors in a spiral pattern
-    
-    Args:
-        name: Task name
-        count: Number of actors
-        max_radius: Maximum spiral radius
-        height_increment: Vertical spacing between actors
-        shape: Actor shape ('cube', 'sphere', 'cylinder')
-    
-    Usage:
-        task = SpawnSpiralTask("spiral", count=15, max_radius=400, height_increment=50)
-    """
-    
-    def __init__(
-        self,
-        name: str,
-        count: int = 15,
-        max_radius: float = 400.0,
-        height_increment: float = 50.0,
-        shape: str = 'cylinder'
-    ):
-        super().__init__(
-            name,
-            count=count,
-            max_radius=max_radius,
-            height_increment=height_increment,
-            shape=shape
-        )
-    
-    def execute(self, context: Dict[str, Any]) -> TaskResult:
-        """Spawn spiral of actors"""
-        from unreallib import actors
-        
-        actor_list = actors.spawn_spiral(
-            count=self.params['count'],
-            max_radius=self.params['max_radius'],
-            height_increment=self.params['height_increment'],
-            shape=self.params['shape']
-        )
-        
-        return TaskResult(
-            status=TaskStatus.SUCCESS,
-            output={'actors': actor_list, 'count': len(actor_list)},
-            metadata={
-                'pattern': 'spiral',
-                'max_radius': self.params['max_radius'],
-                'height_increment': self.params['height_increment'],
-                'shape': self.params['shape']
-            }
-        )
