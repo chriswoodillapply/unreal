@@ -1,0 +1,62 @@
+{
+  "name": "Import Models Demo",
+  "description": "Demonstrates importing external models and spawning existing assets",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after": true,
+    "actor_id_prefix": "model_"
+  },
+  "tasks": [
+    {
+      "name": "spawn_engine_chair",
+      "type": "ImportModelTask",
+      "params": {
+        "source": "/Engine/EditorMeshes/EditorCube",
+        "location": [-200, 0, 0],
+        "scale": [2.0, 2.0, 0.5],
+        "actor_id": "chair_1"
+      }
+    },
+    {
+      "name": "spawn_engine_sphere",
+      "type": "ImportModelTask",
+      "params": {
+        "source": "/Engine/EditorMeshes/EditorSphere",
+        "location": [200, 0, 100],
+        "scale": 1.5,
+        "actor_id": "decoration_1"
+      }
+    },
+    {
+      "name": "spawn_engine_cylinder",
+      "type": "ImportModelTask",
+      "params": {
+        "source": "/Engine/EditorMeshes/EditorCylinder",
+        "location": [0, 200, 0],
+        "scale": [1.0, 1.0, 2.0],
+        "actor_id": "pillar_1"
+      }
+    },
+    {
+      "name": "apply_chair_material",
+      "type": "ApplyMaterialTask",
+      "params": {
+        "actor_id": "chair_1",
+        "material_path": "/Engine/MapTemplates/Materials/BasicAsset01"
+      },
+      "depends_on": ["spawn_engine_chair"]
+    },
+    {
+      "name": "create_scene_light",
+      "type": "CreateLightTask",
+      "params": {
+        "light_type": "point",
+        "location": [0, 0, 400],
+        "intensity": 15000.0,
+        "color": [1.0, 0.95, 0.9],
+        "actor_id": "main_light"
+      }
+    }
+  ]
+}

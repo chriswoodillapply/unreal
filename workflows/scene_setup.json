@@ -1,0 +1,73 @@
+{
+  "name": "Scene Setup",
+  "description": "Demonstrates individual primitive tasks - spawn actors, camera, lights",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after": true,
+    "actor_id_prefix": "scene_"
+  },
+  "tasks": [
+    {
+      "name": "spawn_hero_sphere",
+      "type": "SpawnActorTask",
+      "params": {
+        "shape": "sphere",
+        "location": [0, 0, 100],
+        "scale": 2.0,
+        "actor_id": "hero"
+      }
+    },
+    {
+      "name": "apply_hero_material",
+      "type": "ApplyMaterialTask",
+      "params": {
+        "actor_id": "hero",
+        "material_path": "/Engine/BasicShapes/BasicShapeMaterial"
+      },
+      "depends_on": ["spawn_hero_sphere"]
+    },
+    {
+      "name": "spawn_platform",
+      "type": "SpawnActorTask",
+      "params": {
+        "shape": "cube",
+        "location": [0, 0, -50],
+        "scale": 5.0,
+        "actor_id": "platform"
+      }
+    },
+    {
+      "name": "create_camera",
+      "type": "CreateCameraTask",
+      "params": {
+        "location": [500, 0, 200],
+        "rotation": [0, -90, 0],
+        "fov": 90.0,
+        "actor_id": "main_camera"
+      }
+    },
+    {
+      "name": "create_key_light",
+      "type": "CreateLightTask",
+      "params": {
+        "light_type": "point",
+        "location": [300, 200, 400],
+        "intensity": 10000.0,
+        "color": [1.0, 0.9, 0.8],
+        "actor_id": "key_light"
+      }
+    },
+    {
+      "name": "create_fill_light",
+      "type": "CreateLightTask",
+      "params": {
+        "light_type": "point",
+        "location": [-200, -100, 300],
+        "intensity": 5000.0,
+        "color": [0.6, 0.7, 1.0],
+        "actor_id": "fill_light"
+      }
+    }
+  ]
+}

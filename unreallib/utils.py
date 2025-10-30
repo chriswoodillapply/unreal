@@ -23,6 +23,25 @@ class ActorRegistry:
         """
         self.prefix = prefix
         self._actors: Dict[str, unreal.Actor] = {}
+        
+        # Load existing actors from level with this prefix
+        self._load_existing_actors()
+    
+    def _load_existing_actors(self):
+        """Load existing actors from the level that match our prefix"""
+        all_actors = unreal.EditorLevelLibrary.get_all_level_actors()
+        loaded_count = 0
+        
+        for actor in all_actors:
+            if actor:
+                label = actor.get_actor_label()
+                if label.startswith(self.prefix):
+                    # This actor belongs to our registry
+                    self._actors[label] = actor
+                    loaded_count += 1
+        
+        if loaded_count > 0:
+            print(f"  [ActorRegistry] Loaded {loaded_count} existing actors with prefix '{self.prefix}'")
     
     def register(self, actor_id: str, actor: unreal.Actor):
         """
@@ -36,7 +55,11 @@ class ActorRegistry:
         self._actors[full_id] = actor
         
         # Set actor label in Unreal for debugging
+        print(f"  [ActorRegistry] Setting label: '{full_id}' on actor {actor}")
         actor.set_actor_label(full_id)
+        # Verify it was set
+        actual_label = actor.get_actor_label()
+        print(f"  [ActorRegistry] Verified label: '{actual_label}'")
     
     def get(self, actor_id: str) -> Optional[unreal.Actor]:
         """

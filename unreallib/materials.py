@@ -8,7 +8,7 @@ import unreal
 from typing import Tuple, Optional
 
 
-def set_actor_color(actor: unreal.Actor, color: Tuple[float, float, float], opacity: float = 1.0):
+def set_actor_color(actor: unreal.Actor, color: Tuple[float, float, float], opacity: float = 1.0, base_material_path: Optional[str] = None):
     """
     Set the color of a static mesh actor by creating a dynamic material instance
     
@@ -16,6 +16,9 @@ def set_actor_color(actor: unreal.Actor, color: Tuple[float, float, float], opac
         actor: The actor to modify
         color: RGB color tuple (values 0-1)
         opacity: Opacity value (0-1)
+        base_material_path: Optional path to a material instance with Color parameter
+                           Defaults to /Game/Workflow/MI_RuntimeColorBase if available,
+                           otherwise BasicShapeMaterial
     
     Example:
         >>> from unreallib.materials import set_actor_color
@@ -29,23 +32,32 @@ def set_actor_color(actor: unreal.Actor, color: Tuple[float, float, float], opac
         unreal.log_warning(f"Actor {actor.get_actor_label()} has no StaticMeshComponent")
         return
     
-    # Load base material
-    base_material = unreal.EditorAssetLibrary.load_asset(
-        "/Engine/BasicShapes/BasicShapeMaterial"
-    )
+    # Determine which base material to use
+    if base_material_path is None:
+        # Try the workflow material first, fall back to basic shape
+        runtime_mat = "/Game/Workflow/MI_RuntimeColorBase"
+        if unreal.EditorAssetLibrary.does_asset_exist(runtime_mat):
+            base_material_path = runtime_mat
+        else:
+            base_material_path = "/Engine/BasicShapes/BasicShapeMaterial"
     
-    # Create dynamic material instance
-    dynamic_material = unreal.MaterialInstanceDynamic.create(
-        base_material,
-        static_mesh_component
-    )
+    # Load base material
+    base_material = unreal.EditorAssetLibrary.load_asset(base_material_path)
+    
+    if not base_material:
+        unreal.log_error(f"Failed to load material: {base_material_path}")
+        return
+    
+    # Create dynamic material instance using component method (UE5.6 compatible)
+    dynamic_material = static_mesh_component.create_dynamic_material_instance(0, base_material)
+    
+    if not dynamic_material:
+        unreal.log_error(f"Failed to create dynamic material instance from {base_material_path}")
+        return
     
     # Set color parameter
     linear_color = unreal.LinearColor(color[0], color[1], color[2], opacity)
     dynamic_material.set_vector_parameter_value("Color", linear_color)
-    
-    # Apply material to component
-    static_mesh_component.set_material(0, dynamic_material)
     
     unreal.log(f"Set color of {actor.get_actor_label()} to RGB{color}")
 
@@ -58,20 +70,25 @@ def set_actor_material(actor: unreal.Actor, material_path: str, material_index: 
         actor: The actor to modify
         material_path: Path to the material asset
         material_index: Which material slot to modify
+        
+    Returns:
+        True if material was applied successfully, False otherwise
     """
     static_mesh_component = actor.get_component_by_class(unreal.StaticMeshComponent)
     
     if not static_mesh_component:
         unreal.log_warning(f"Actor {actor.get_actor_label()} has no StaticMeshComponent")
-        return
+        return False
     
     material = unreal.EditorAssetLibrary.load_asset(material_path)
     
     if material:
         static_mesh_component.set_material(material_index, material)
         unreal.log(f"Applied material {material_path} to {actor.get_actor_label()}")
+        return True
     else:
         unreal.log_error(f"Could not load material: {material_path}")
+        return False
 
 
 # Preset colors

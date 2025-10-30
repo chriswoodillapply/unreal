@@ -73,8 +73,7 @@ class MaterialUpsertTask(Task):
                 asset_name=asset_name,
                 package_path=package_path,
                 asset_class=unreal.MaterialInstanceConstant,
-                factory=unreal.MaterialInstanceConstantFactoryNew(),
-                calling_context=None
+                factory=unreal.MaterialInstanceConstantFactoryNew()
             )
             material_instance.set_editor_property('parent', parent)
             created = True

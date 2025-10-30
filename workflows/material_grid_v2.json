@@ -1,0 +1,50 @@
+{
+  "name": "Material Grid V2",
+  "description": "Grid with materials using new primitive+generator architecture",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after": true,
+    "actor_id_prefix": "material_grid_v2_"
+  },
+  "tasks": [
+    {
+      "name": "generate_grid",
+      "type": "GridGeneratorTask",
+      "params": {
+        "rows": 3,
+        "cols": 3,
+        "spacing": 300,
+        "shape": "sphere",
+        "scale": 1.5
+      }
+    },
+    {
+      "name": "spawn_actors",
+      "type": "ForEachSpawnTask",
+      "params": {
+        "data_key": "grid_points",
+        "use_registry": true
+      },
+      "depends_on": ["generate_grid"]
+    },
+    {
+      "name": "apply_materials",
+      "type": "ForEachMaterialTask",
+      "params": {
+        "material_map": {
+          "0_0": "/Engine/BasicShapes/BasicShapeMaterial",
+          "0_1": "/Engine/EngineMaterials/WorldGridMaterial",
+          "0_2": "/Engine/EngineMaterials/DefaultTextMaterialOpaque",
+          "1_0": "/Engine/MapTemplates/Materials/BasicAsset01",
+          "1_1": "/Engine/MapTemplates/Materials/BasicAsset02",
+          "1_2": "/Engine/MapTemplates/Materials/BasicAsset03",
+          "2_0": "/Engine/EditorMaterials/WidgetMaterial_X",
+          "2_1": "/Engine/EditorMaterials/WidgetMaterial_Y",
+          "2_2": "/Engine/EditorMaterials/WidgetMaterial_Z"
+        }
+      },
+      "depends_on": ["spawn_actors"]
+    }
+  ]
+}

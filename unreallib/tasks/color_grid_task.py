@@ -33,6 +33,9 @@ class ColorGridTask(Task):
         import unreal
         from unreallib import materials
         
+        print("=" * 60)
+        print("COLOR_GRID_TASK VERSION: 2024-10-29-SIMPLIFIED-v2")
+        print("=" * 60)
         print(f"ColorGridTask: Looking for actors with prefix '{self.prefix}'")
         print(f"ColorGridTask: Color map has {len(self.color_map)} entries")
         
@@ -53,29 +56,8 @@ class ColorGridTask(Task):
                         color = color_data.get('color', (1.0, 1.0, 1.0))
                         opacity = color_data.get('opacity', 1.0)
                         print(f"  Setting color for '{label}' to {color}")
-                        # If we have a provided material instance path, try to use it
-                        mat_path = context.get('material_path')
-                        vec_param = context.get('material_vector_parameter', 'Color')
-                        if mat_path:
-                            try:
-                                base_mat = unreal.EditorAssetLibrary.load_asset(mat_path)
-                                dynamic_material = unreal.MaterialInstanceDynamic.create(base_mat, actor)
-                                linear_color = unreal.LinearColor(color[0], color[1], color[2], opacity)
-                                # Try parameter names fallback list
-                                for pname in [vec_param, 'Color', 'Tint', 'BaseColor', 'Albedo']:
-                                    try:
-                                        dynamic_material.set_vector_parameter_value(pname, linear_color)
-                                        break
-                                    except Exception:
-                                        continue
-                                static_mesh_component = actor.get_component_by_class(unreal.StaticMeshComponent)
-                                if static_mesh_component:
-                                    static_mesh_component.set_material(0, dynamic_material)
-                            except Exception as e:
-                                print(f"  Warning: Failed to apply context material: {e}. Falling back to default coloring.")
-                                materials.set_actor_color(actor, color, opacity)
-                        else:
-                            materials.set_actor_color(actor, color, opacity)
+                        # Use materials.set_actor_color which creates dynamic materials correctly
+                        materials.set_actor_color(actor, color, opacity)
                         modified_count += 1
                         break
         

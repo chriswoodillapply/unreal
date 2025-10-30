@@ -1,0 +1,42 @@
+{
+  "name": "Material Grid",
+  "description": "Creates a grid with different materials applied to each sphere",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after": true,
+    "actor_id_prefix": "material_grid_"
+  },
+  "tasks": [
+    {
+      "name": "spawn_grid",
+      "type": "SpawnGridTask",
+      "params": {
+        "rows": 3,
+        "cols": 3,
+        "spacing": 300,
+        "shape": "sphere",
+        "scale": 1.5
+      }
+    },
+    {
+      "name": "apply_materials",
+      "type": "ApplyMaterialsTask",
+      "params": {
+        "prefix": "material_grid_",
+        "material_map": {
+          "0_0": "/Engine/BasicShapes/BasicShapeMaterial",
+          "0_1": "/Engine/EngineMaterials/WorldGridMaterial",
+          "0_2": "/Engine/EngineMaterials/DefaultTextMaterialOpaque",
+          "1_0": "/Engine/MapTemplates/Materials/BasicAsset01",
+          "1_1": "/Engine/MapTemplates/Materials/BasicAsset02",
+          "1_2": "/Engine/MapTemplates/Materials/BasicAsset03",
+          "2_0": "/Engine/EditorMaterials/WidgetMaterial_X",
+          "2_1": "/Engine/EditorMaterials/WidgetMaterial_Y",
+          "2_2": "/Engine/EditorMaterials/WidgetMaterial_Z"
+        }
+      },
+      "depends_on": ["spawn_grid"]
+    }
+  ]
+}

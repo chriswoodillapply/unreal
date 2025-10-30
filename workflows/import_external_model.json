@@ -1,0 +1,83 @@
+{
+  "name": "Import External Model",
+  "description": "Import a 3D model file from disk (FBX, OBJ, etc.)",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after": true,
+    "actor_id_prefix": "imported_"
+  },
+  "tasks": [
+    {
+      "name": "import_teal_chair",
+      "type": "ImportModelTask",
+      "params": {
+        "source": "C:/3d/models/teal_chair.fbx",
+        "location": [0, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": 1.0,
+        "actor_id": "teal_chair",
+        "import_settings": {
+          "import_materials": true,
+          "import_textures": true,
+          "combine_meshes": true
+        }
+      }
+    },
+    {
+      "name": "import_white_chair",
+      "type": "ImportModelTask",
+      "params": {
+        "source": "C:/3d/models/white_chair.fbx",
+        "location": [300, 0, 0],
+        "rotation": [0, 0, 0],
+        "scale": 1.0,
+        "actor_id": "white_chair",
+        "import_settings": {
+          "import_materials": true,
+          "import_textures": true,
+          "combine_meshes": true
+        }
+      }
+    },
+    {
+      "name": "import_table",
+      "type": "ImportModelTask",
+      "params": {
+        "source": "C:/3d/models/table.fbx",
+        "location": [150, 150, 0],
+        "rotation": [0, 0, 0],
+        "scale": 1.0,
+        "actor_id": "table",
+        "import_settings": {
+          "import_materials": true,
+          "import_textures": true,
+          "combine_meshes": true
+        }
+      }
+    },
+    {
+      "name": "create_scene_light",
+      "type": "CreateLightTask",
+      "params": {
+        "light_type": "point",
+        "location": [150, 150, 400],
+        "intensity": 15000.0,
+        "color": [1.0, 0.95, 0.9],
+        "actor_id": "scene_light"
+      },
+      "depends_on": ["import_table"]
+    },
+    {
+      "name": "create_camera",
+      "type": "CreateCameraTask",
+      "params": {
+        "location": [600, -400, 300],
+        "rotation": [-10, -125, 0],
+        "fov": 90.0,
+        "actor_id": "scene_camera"
+      },
+      "depends_on": ["import_table"]
+    }
+  ]
+}

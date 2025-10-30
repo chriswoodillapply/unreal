@@ -53,7 +53,7 @@ class SpawnGridTask(Task):
         scale = self.params['scale']
         
         # Check if upsert mode is enabled
-        config = context.get('config')
+        config = context.get('workflow_config')
         upsert_mode = config.upsert_mode if config else False
         prefix = config.actor_id_prefix if config else "workflow_grid_"
         
@@ -93,6 +93,12 @@ class SpawnGridTask(Task):
                         update_actor
                     )
                     
+                    # Debug: verify label was set
+                    actual_label = actor.get_actor_label()
+                    expected_label = f"{prefix}{actor_id}"
+                    if actual_label != expected_label:
+                        print(f"⚠ Label mismatch! Expected '{expected_label}', got '{actual_label}'")
+                    
                     actor_list.append(actor)
                     if was_created:
                         created_count += 1
@@ -116,7 +122,7 @@ class SpawnGridTask(Task):
                 }
             )
         else:
-            # Standard spawn without upsert
+            # Standard spawn without upsert - but still set labels for color_grid to find
             actor_list = actors.spawn_grid(
                 rows=rows,
                 cols=cols,
@@ -124,6 +130,17 @@ class SpawnGridTask(Task):
                 shape=shape,
                 scale=scale
             )
+            
+            # Set actor labels so ColorGridTask can find them
+            prefix = config.actor_id_prefix if config else "workflow_grid_"
+            idx = 0
+            for row in range(rows):
+                for col in range(cols):
+                    if idx < len(actor_list):
+                        actor_id = f"{row}_{col}"
+                        label = f"{prefix}{actor_id}"
+                        actor_list[idx].set_actor_label(label)
+                        idx += 1
             
             return TaskResult(
                 status=TaskStatus.SUCCESS,

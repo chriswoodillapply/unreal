@@ -12,12 +12,12 @@ import importlib, sys
 
 # Hot-reload unreallib modules so edits are picked up in a persistent Unreal Python session
 def _reload_unreallib():
-    to_reload = [m for m in list(sys.modules.keys()) if m.startswith('unreallib') or m.startswith('remotecontrol')]
-    for m in sorted(to_reload, reverse=True):  # reverse to reload leaf modules first
-        try:
-            importlib.reload(sys.modules[m])
-        except Exception:
-            pass
+    """Reload all unreallib modules to pick up code changes"""
+    # First, remove all unreallib modules from cache to force fresh imports
+    to_remove = [m for m in list(sys.modules.keys()) if m.startswith('unreallib') or m.startswith('remotecontrol')]
+    for m in to_remove:
+        del sys.modules[m]
+    print(f"🔄 Cleared {len(to_remove)} cached modules for fresh reload")
 
 _reload_unreallib()
 
@@ -27,7 +27,7 @@ from unreallib.workflow import WorkflowLoader, WorkflowExecutor
 # CONFIGURATION - Change these settings
 # ============================================================
 
-WORKFLOW_NAME = 'colored_grid'  # Change to: colored_grid, multiple_patterns, or your custom workflow
+WORKFLOW_NAME = 'import_external_model'  # Options: import_external_model, import_models_demo, material_grid_v2, scene_setup
 
 # ============================================================
 

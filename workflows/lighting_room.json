@@ -1,0 +1,89 @@
+{
+  "name": "Interior Room Lighting",
+  "description": "Realistic interior lighting with ceiling lights and practical sources",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after": true,
+    "actor_id_prefix": "room_"
+  },
+  "tasks": [
+    {
+      "name": "generate_room_lights",
+      "type": "LightsGeneratorTask",
+      "params": {
+        "default_intensity": 5000.0,
+        "default_color": [1.0, 0.9, 0.8],
+        "lights": [
+          {
+            "actor_id": "ceiling_main",
+            "light_type": "point",
+            "location": [0, 0, 300],
+            "intensity": 10000.0,
+            "radius": 800.0
+          },
+          {
+            "actor_id": "ceiling_corner_1",
+            "light_type": "point",
+            "location": [300, 300, 280],
+            "intensity": 6000.0
+          },
+          {
+            "actor_id": "ceiling_corner_2",
+            "light_type": "point",
+            "location": [-300, 300, 280],
+            "intensity": 6000.0
+          },
+          {
+            "actor_id": "ceiling_corner_3",
+            "light_type": "point",
+            "location": [300, -300, 280],
+            "intensity": 6000.0
+          },
+          {
+            "actor_id": "ceiling_corner_4",
+            "light_type": "point",
+            "location": [-300, -300, 280],
+            "intensity": 6000.0
+          },
+          {
+            "actor_id": "table_lamp",
+            "light_type": "point",
+            "location": [200, -200, 100],
+            "intensity": 4000.0,
+            "color": [1.0, 0.8, 0.6],
+            "radius": 400.0
+          },
+          {
+            "actor_id": "window_light",
+            "light_type": "spot",
+            "location": [0, 600, 200],
+            "rotation": [0, -90, 0],
+            "intensity": 15000.0,
+            "color": [0.9, 0.95, 1.0],
+            "inner_cone_angle": 30.0,
+            "outer_cone_angle": 60.0
+          },
+          {
+            "actor_id": "accent_light",
+            "light_type": "spot",
+            "location": [-400, 0, 250],
+            "rotation": [-30, 90, 0],
+            "intensity": 8000.0,
+            "color": [1.0, 0.7, 0.4],
+            "outer_cone_angle": 45.0
+          }
+        ]
+      }
+    },
+    {
+      "name": "create_room_lights",
+      "type": "ForEachLightTask",
+      "params": {
+        "lights_input": "generate_room_lights.lights",
+        "use_registry": true
+      },
+      "depends_on": ["generate_room_lights"]
+    }
+  ]
+}

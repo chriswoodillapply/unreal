@@ -1,0 +1,54 @@
+{
+  "name": "Outdoor Scene Lighting",
+  "description": "Natural outdoor lighting with sun and ambient fill",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after": true,
+    "actor_id_prefix": "outdoor_"
+  },
+  "tasks": [
+    {
+      "name": "generate_outdoor_lights",
+      "type": "LightsGeneratorTask",
+      "params": {
+        "lights": [
+          {
+            "actor_id": "sun",
+            "light_type": "directional",
+            "location": [0, 0, 0],
+            "rotation": [-45, 135, 0],
+            "intensity": 4.0,
+            "color": [1.0, 0.95, 0.85],
+            "cast_shadows": true
+          },
+          {
+            "actor_id": "sky_ambient",
+            "light_type": "directional",
+            "location": [0, 0, 0],
+            "rotation": [45, 0, 0],
+            "intensity": 0.8,
+            "color": [0.5, 0.6, 0.8]
+          },
+          {
+            "actor_id": "ground_bounce",
+            "light_type": "directional",
+            "location": [0, 0, 0],
+            "rotation": [90, 0, 0],
+            "intensity": 0.3,
+            "color": [0.6, 0.5, 0.4]
+          }
+        ]
+      }
+    },
+    {
+      "name": "create_outdoor_lights",
+      "type": "ForEachLightTask",
+      "params": {
+        "lights_input": "generate_outdoor_lights.lights",
+        "use_registry": true
+      },
+      "depends_on": ["generate_outdoor_lights"]
+    }
+  ]
+}

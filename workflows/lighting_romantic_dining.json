@@ -1,0 +1,126 @@
+{
+  "name": "Romantic Dining Room Lighting",
+  "description": "Warm, intimate candlelit dining room with soft accents and subtle moonlight fill.",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after_execute": false
+  },
+  "tasks": [
+    {
+      "name": "generate_lights",
+      "type": "LightsGeneratorTask",
+      "params": {
+        "default_intensity": 5000.0,
+        "default_color": [1.0, 0.94, 0.86],
+        "default_rotation": [0, 0, 0],
+        "lights": [
+          {
+            "actor_id": "romance_table_candle_cluster_left",
+            "light_type": "point",
+            "location": [-35, -20, 95],
+            "intensity": 3200.0,
+            "color": [1.0, 0.88, 0.72],
+            "radius": 120.0,
+            "cast_shadows": true
+          },
+          {
+            "actor_id": "romance_table_candle_cluster_right",
+            "light_type": "point",
+            "location": [35, 20, 95],
+            "intensity": 3200.0,
+            "color": [1.0, 0.88, 0.72],
+            "radius": 120.0,
+            "cast_shadows": true
+          },
+          {
+            "actor_id": "romance_chandelier_key_1",
+            "light_type": "point",
+            "location": [0, 0, 260],
+            "intensity": 8500.0,
+            "color": [1.0, 0.92, 0.80],
+            "radius": 350.0,
+            "cast_shadows": true
+          },
+          {
+            "actor_id": "romance_chandelier_key_2",
+            "light_type": "point",
+            "location": [40, 0, 250],
+            "intensity": 6500.0,
+            "color": [1.0, 0.92, 0.80],
+            "radius": 300.0,
+            "cast_shadows": false
+          },
+          {
+            "actor_id": "romance_wall_sconce_left",
+            "light_type": "spot",
+            "location": [-300, 0, 180],
+            "rotation": [0, 90, 0],
+            "intensity": 12000.0,
+            "color": [1.0, 0.9, 0.78],
+            "inner_cone_angle": 20.0,
+            "outer_cone_angle": 45.0,
+            "cast_shadows": true
+          },
+          {
+            "actor_id": "romance_wall_sconce_right",
+            "light_type": "spot",
+            "location": [300, 0, 180],
+            "rotation": [0, -90, 0],
+            "intensity": 12000.0,
+            "color": [1.0, 0.9, 0.78],
+            "inner_cone_angle": 20.0,
+            "outer_cone_angle": 45.0,
+            "cast_shadows": true
+          },
+          {
+            "actor_id": "romance_back_rim_subtle",
+            "light_type": "spot",
+            "location": [0, -340, 210],
+            "rotation": [-5, 0, 0],
+            "intensity": 9000.0,
+            "color": [0.95, 0.98, 1.0],
+            "inner_cone_angle": 12.0,
+            "outer_cone_angle": 30.0,
+            "cast_shadows": false
+          },
+          {
+            "actor_id": "romance_room_fill_bounce_1",
+            "light_type": "point",
+            "location": [0, 160, 160],
+            "intensity": 2600.0,
+            "color": [1.0, 0.96, 0.90],
+            "radius": 400.0,
+            "cast_shadows": false
+          },
+          {
+            "actor_id": "romance_room_fill_bounce_2",
+            "light_type": "point",
+            "location": [0, -160, 160],
+            "intensity": 2600.0,
+            "color": [1.0, 0.96, 0.90],
+            "radius": 400.0,
+            "cast_shadows": false
+          },
+          {
+            "actor_id": "romance_moonlight_directional",
+            "light_type": "directional",
+            "location": [0, 0, 0],
+            "rotation": [-15, -30, 0],
+            "intensity": 0.8,
+            "color": [0.68, 0.75, 1.0],
+            "cast_shadows": false
+          }
+        ]
+      }
+    },
+    {
+      "name": "create_lights",
+      "type": "ForEachLightTask",
+      "depends_on": ["generate_lights"],
+      "params": {
+        "lights_input": "generate_lights.lights"
+      }
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "name": "Complete Scene with Lights",
+  "description": "Full scene setup with actors, camera, and lighting system",
+  "config": {
+    "upsert_mode": true,
+    "clear_before_execute": false,
+    "save_after": true,
+    "actor_id_prefix": "demo_"
+  },
+  "tasks": [
+    {
+      "name": "spawn_center_sphere",
+      "type": "SpawnActorTask",
+      "params": {
+        "shape": "sphere",
+        "location": [0, 0, 100],
+        "scale": 2.5,
+        "actor_id": "hero_sphere"
+      }
+    },
+    {
+      "name": "spawn_platform",
+      "type": "SpawnActorTask",
+      "params": {
+        "shape": "cube",
+        "location": [0, 0, -50],
+        "scale": [6.0, 6.0, 0.5],
+        "actor_id": "platform"
+      }
+    },
+    {
+      "name": "create_camera",
+      "type": "CreateCameraTask",
+      "params": {
+        "location": [600, 400, 300],
+        "rotation": [-15, -125, 0],
+        "fov": 90.0,
+        "actor_id": "main_camera"
+      }
+    },
+    {
+      "name": "generate_scene_lights",
+      "type": "LightsGeneratorTask",
+      "params": {
+        "lights": [
+          {
+            "actor_id": "key_light",
+            "light_type": "point",
+            "location": [400, 300, 400],
+            "intensity": 15000.0,
+            "color": [1.0, 0.9, 0.8]
+          },
+          {
+            "actor_id": "fill_light",
+            "light_type": "point",
+            "location": [-300, -200, 300],
+            "intensity": 7000.0,
+            "color": [0.6, 0.7, 1.0]
+          },
+          {
+            "actor_id": "rim_light",
+            "light_type": "spot",
+            "location": [-200, 400, 250],
+            "rotation": [0, -135, 0],
+            "intensity": 12000.0,
+            "color": [1.0, 1.0, 1.0],
+            "inner_cone_angle": 20.0,
+            "outer_cone_angle": 40.0
+          },
+          {
+            "actor_id": "environment_light",
+            "light_type": "directional",
+            "location": [0, 0, 0],
+            "rotation": [-60, 45, 0],
+            "intensity": 2.0,
+            "color": [0.9, 0.95, 1.0]
+          }
+        ]
+      },
+      "depends_on": ["spawn_center_sphere", "spawn_platform"]
+    },
+    {
+      "name": "create_all_lights",
+      "type": "ForEachLightTask",
+      "params": {
+        "lights_input": "generate_scene_lights.lights",
+        "use_registry": true
+      },
+      "depends_on": ["generate_scene_lights"]
+    }
+  ]
+}

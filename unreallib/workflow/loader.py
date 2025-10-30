@@ -11,6 +11,19 @@ from typing import Dict, Any, List, Optional
 
 from unreallib.workflow import WorkflowGraph, WorkflowConfig
 from unreallib.tasks import (
+    # Primitive tasks
+    SpawnActorTask,
+    ApplyMaterialTask,
+    CreateCameraTask,
+    CreateLightTask,
+    ImportModelTask,
+    # Generator tasks
+    GridGeneratorTask,
+    ForEachSpawnTask,
+    ForEachMaterialTask,
+    LightsGeneratorTask,
+    ForEachLightTask,
+    # Legacy tasks
     ClearLevelTask,
     SpawnGridTask,
     SpawnCircleTask,
@@ -18,11 +31,25 @@ from unreallib.tasks import (
     SetActorColorTask,
     ColorGridTask,
     MaterialUpsertTask,
+    ApplyMaterialsTask,
 )
 
 
 # Task type registry - maps string names to task classes
 TASK_REGISTRY = {
+    # Primitive tasks
+    'SpawnActorTask': SpawnActorTask,
+    'ApplyMaterialTask': ApplyMaterialTask,
+    'CreateCameraTask': CreateCameraTask,
+    'CreateLightTask': CreateLightTask,
+    'ImportModelTask': ImportModelTask,
+    # Generator tasks
+    'GridGeneratorTask': GridGeneratorTask,
+    'ForEachSpawnTask': ForEachSpawnTask,
+    'ForEachMaterialTask': ForEachMaterialTask,
+    'LightsGeneratorTask': LightsGeneratorTask,
+    'ForEachLightTask': ForEachLightTask,
+    # Legacy tasks
     'ClearLevelTask': ClearLevelTask,
     'SpawnGridTask': SpawnGridTask,
     'SpawnCircleTask': SpawnCircleTask,
@@ -30,6 +57,7 @@ TASK_REGISTRY = {
     'SetActorColorTask': SetActorColorTask,
     'ColorGridTask': ColorGridTask,
     'MaterialUpsertTask': MaterialUpsertTask,
+    'ApplyMaterialsTask': ApplyMaterialsTask,
 }
 
 
