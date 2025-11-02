@@ -20,7 +20,7 @@
         "import_settings": {
           "import_materials": true,
           "import_textures": true,
-          "combine_meshes": true
+          "combine_meshes": false
         }
       }
     },
@@ -36,7 +36,7 @@
         "import_settings": {
           "import_materials": true,
           "import_textures": true,
-          "combine_meshes": true
+          "combine_meshes": false
         }
       }
     },
@@ -52,7 +52,7 @@
         "import_settings": {
           "import_materials": true,
           "import_textures": true,
-          "combine_meshes": true
+          "combine_meshes": false
         }
       }
     },

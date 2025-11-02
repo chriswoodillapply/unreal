@@ -46,13 +46,18 @@ class RemoteControlConfig:
     
     def _load_project_config(self):
         """Load Unreal project configuration"""
-        # Project paths
+        # Project paths (authoritative from .env, with simple defaults)
         self.PROJECT_NAME = os.getenv('PROJECT', 'firstperson')
         self.PROJECT_FOLDER = Path(os.getenv(
             'PROJECT_FOLDER',
             f'C:/Users/cwood/Documents/Unreal Projects/{self.PROJECT_NAME}'
         ))
-        self.PROJECT_FILE = self.PROJECT_FOLDER / f"{self.PROJECT_NAME}.uproject"
+        # If PROJECT_FILE explicitly set, use it; else derive
+        env_project_file = os.getenv('PROJECT_FILE')
+        if env_project_file:
+            self.PROJECT_FILE = Path(env_project_file)
+        else:
+            self.PROJECT_FILE = self.PROJECT_FOLDER / f"{self.PROJECT_NAME}.uproject"
         
         # Scripts and content paths
         self.SCRIPTS_FOLDER = self.PROJECT_FOLDER / 'scripts'

@@ -151,71 +151,96 @@ class ImportModelTask(Task):
         if not unreal.EditorAssetLibrary.does_directory_exist(parent_path):
             unreal.EditorAssetLibrary.make_directory(parent_path)
         
-        # Create import task
-        task = unreal.AssetImportTask()
-        task.set_editor_property('filename', file_path)
-        task.set_editor_property('destination_path', destination_path)
-        task.set_editor_property('destination_name', base_name)
+        # Check if this is an FBX file and use Interchange if so
+        is_fbx = file_path.lower().endswith('.fbx')
         
-        # Don't show dialog
-        task.set_editor_property('automated', True)
-        task.set_editor_property('save', True)
-        task.set_editor_property('replace_existing', True)
-        
-        # Import settings for FBX
-        if file_path.lower().endswith('.fbx'):
-            options = unreal.FbxImportUI()
-            options.set_editor_property('import_mesh', True)
-            options.set_editor_property('import_materials', self.import_settings.get('import_materials', True))
-            options.set_editor_property('import_textures', self.import_settings.get('import_textures', True))
-            options.set_editor_property('import_as_skeletal', False)  # Import as static mesh
+        if is_fbx:
+            # Use Interchange API for FBX to access hierarchy controls
+            print(f"  Using Interchange API for FBX import")
             
-            # Get static mesh import settings
-            static_mesh_options = options.get_editor_property('static_mesh_import_data')
+            # Enable Interchange FBX import
+            level_editor_subsystem = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
+            unreal.SystemLibrary.execute_console_command(
+                level_editor_subsystem.get_world(), 
+                'Interchange.FeatureFlags.Import.FBX true'
+            )
             
-            # Set mesh hierarchy preservation
+            editor_asset_subsystem = unreal.get_editor_subsystem(unreal.EditorAssetSubsystem)
+            
+            # Create transient pipeline
+            transient_path = "/Interchange/Pipelines/Transient/"
+            transient_pipeline_path = transient_path + "MyAutomationPipeline"
+            editor_asset_subsystem.delete_directory(transient_path)
+            
+            # Duplicate the default pipeline
+            pipeline = editor_asset_subsystem.duplicate_asset(
+                "/Interchange/Pipelines/DefaultAssetsPipeline", 
+                transient_pipeline_path
+            )
+            
+            # Configure pipeline settings
             combine_meshes = self.import_settings.get('combine_meshes', False)
             print(f"  Import setting: combine_meshes = {combine_meshes}")
+            print(f"  DEBUG: self.import_settings = {self.import_settings}")
             
-            if static_mesh_options:
-                try:
-                    # In UE, combine_meshes controls whether to merge FBX hierarchy into one mesh
-                    # False = preserve separate meshes as individual assets
-                    static_mesh_options.set_editor_property('combine_meshes', combine_meshes)
-                    
-                    # Also try setting import_mesh_lo_ds which might affect hierarchy
-                    # And ensure we're not forcing single mesh creation
-                    if not combine_meshes:
-                        # Try to preserve hierarchy by not combining
-                        try:
-                            static_mesh_options.set_editor_property('import_mesh_lo_ds', False)
-                        except:
-                            pass
-                    
-                    print(f"  ✓ Set combine_meshes={combine_meshes}")
-                except Exception as e:
-                    print(f"  ✗ Could not set combine_meshes: {e}")
+            # Force static mesh import
+            pipeline.common_meshes_properties.force_all_mesh_as_type = unreal.InterchangeForceMeshType.IFMT_STATIC_MESH
             
-            task.options = options
+            # Set combine_static_meshes - this is the key setting!
+            pipeline.mesh_pipeline.combine_static_meshes = combine_meshes
+            print(f"  ✓ Set pipeline.mesh_pipeline.combine_static_meshes = {combine_meshes}")
+            
+            # Material and texture settings
+            pipeline.material_pipeline.import_materials = self.import_settings.get('import_materials', True)
+            pipeline.material_pipeline.texture_pipeline.import_textures = self.import_settings.get('import_textures', True)
+            
+            # Create source data and import parameters
+            source_data = unreal.InterchangeManager.create_source_data(file_path)
+            import_asset_parameters = unreal.ImportAssetParameters()
+            import_asset_parameters.is_automated = True
+            
+            # Add the configured pipeline
+            import_asset_parameters.override_pipelines.append(
+                unreal.SoftObjectPath(transient_pipeline_path + ".MyAutomationPipeline")
+            )
+            
+            # Execute import via Interchange
+            interchange_manager = unreal.InterchangeManager.get_interchange_manager_scripted()
+            interchange_manager.import_asset(destination_path + "/", source_data, import_asset_parameters)
+            
+            # Clean up transient pipeline
+            editor_asset_subsystem.delete_directory(transient_path)
+            
+        else:
+            # Use legacy AssetImportTask for non-FBX files
+            task = unreal.AssetImportTask()
+            task.set_editor_property('filename', file_path)
+            task.set_editor_property('destination_path', destination_path)
+            task.set_editor_property('destination_name', base_name)
+            
+            # Don't show dialog
+            task.set_editor_property('automated', True)
+            task.set_editor_property('save', True)
+            task.set_editor_property('replace_existing', True)
+            
+            # Execute import
+            unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks([task])
         
-        # Execute import
-        unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks([task])
-        
-        # Get the imported assets - find ALL StaticMesh assets
+        # Get the imported assets - scan the destination folder for StaticMesh assets
         imported_meshes = []
-        if task.get_editor_property('imported_object_paths'):
-            print(f"  Imported {len(task.get_editor_property('imported_object_paths'))} assets")
-            for asset_path in task.get_editor_property('imported_object_paths'):
-                asset = unreal.EditorAssetLibrary.load_asset(asset_path)
-                if asset and isinstance(asset, unreal.StaticMesh):
-                    print(f"  Found StaticMesh: {asset_path}")
-                    imported_meshes.append(asset)
+        all_assets = unreal.EditorAssetLibrary.list_assets(destination_path, recursive=True)
+        print(f"  Scanning {destination_path} - found {len(all_assets)} assets")
+        
+        for asset_path in all_assets:
+            asset = unreal.EditorAssetLibrary.load_asset(asset_path)
+            if asset and isinstance(asset, unreal.StaticMesh):
+                print(f"  Found StaticMesh: {asset_path}")
+                imported_meshes.append(asset)
         
         if len(imported_meshes) == 0:
             print(f"  Warning: No StaticMesh found in imported assets")
             return None
         
-        # Always try to use or create a Blueprint for consistency
         print(f"  Found {len(imported_meshes)} mesh(es)")
         
         # Get folder paths for Blueprint detection/creation
@@ -303,6 +328,10 @@ class ImportModelTask(Task):
             if not root:
                 print(f"  ✗ Could not find root component")
                 return None
+            
+            # Ensure root is a SceneComponent (not a StaticMeshComponent)
+            root_data = bfl.get_data(root)
+            root_obj = bfl.get_object_for_blueprint(root_data, blueprint)
             
             print(f"  Adding {len(meshes)} mesh component(s)...")
             
